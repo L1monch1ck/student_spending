@@ -1,8 +1,6 @@
-# predict.py
 import joblib
 import numpy as np
 
-# Загрузка модели
 kmeans = joblib.load('models/kmeans_model.pkl')
 scaler = joblib.load('models/scaler.pkl')
 

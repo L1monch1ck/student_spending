@@ -7,14 +7,12 @@ from sklearn.decomposition import PCA
 
 app = Flask(__name__)
 
-# ---------------- PATHS ----------------
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 data_path = os.path.join(BASE_DIR, 'data', 'student_spending.csv')
 model_path = os.path.join(BASE_DIR, 'models', 'kmeans_model.pkl')
 scaler_path = os.path.join(BASE_DIR, 'models', 'scaler.pkl')
 
-# ---------------- LOAD DATA ----------------
 df = pd.read_csv(data_path)
 kmeans = joblib.load(model_path)
 scaler = joblib.load(scaler_path)
@@ -25,20 +23,16 @@ features = [
     'personal_care','technology','health_wellness','miscellaneous'
 ]
 
-# ---------------- SCALE ----------------
 X_scaled = scaler.transform(df[features])
 
-# ---------------- PCA 2D ----------------
 pca = PCA(n_components=2)
 X_pca = pca.fit_transform(X_scaled)
 
 df['PC1'] = X_pca[:, 0]
 df['PC2'] = X_pca[:, 1]
 
-# ---------------- CLUSTERS ----------------
 df['Cluster'] = kmeans.labels_
 
-# ---------------- DESCRIPTIONS ----------------
 DESCRIPTIONS = {
     0: "Экономные студенты",
     1: "Средний уровень расходов",
@@ -46,7 +40,6 @@ DESCRIPTIONS = {
     3: "High-income lifestyle студенты"
 }
 
-# ---------------- PLOT ----------------
 def generate_plot(user_point=None):
     fig = px.scatter(
         df,
@@ -57,7 +50,6 @@ def generate_plot(user_point=None):
         hover_data=features
     )
 
-    # 👉 user point
     if user_point:
         scaled = scaler.transform([user_point])
         p = pca.transform(scaled)
@@ -79,7 +71,6 @@ def generate_plot(user_point=None):
     return fig.to_html(full_html=False, include_plotlyjs='cdn')
 
 
-# ---------------- ROUTE ----------------
 @app.route('/', methods=['GET', 'POST'])
 def home():
     result = None
@@ -99,7 +90,6 @@ def home():
     return render_template_string(TEMPLATE, result=result, table=table, plot=plot)
 
 
-# ---------------- UI ----------------
 TEMPLATE = """
 <!DOCTYPE html>
 <html lang="ru">
