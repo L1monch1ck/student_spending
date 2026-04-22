@@ -26,13 +26,11 @@ kmeans.fit(X_scaled)
 
 os.makedirs('models', exist_ok=True)
 
-# Сохранение модели и scaler
 joblib.dump(kmeans, 'models/kmeans_model.pkl')
 joblib.dump(scaler, 'models/scaler.pkl')
 
 print("✅ Модель K-Means успешно обучена и сохранена в папку 'models'!")
 
-# Elbow Method для визуализации
 inertia = []
 for k in range(1, 11):
     km = KMeans(n_clusters=k, random_state=42, n_init=10)
